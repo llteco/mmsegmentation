@@ -1,0 +1,125 @@
+[build-system]
+requires = ["setuptools>=42", "wheel>=0.45.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mmsegmentation"
+description = "Open MMLab Semantic Segmentation Toolbox and Benchmark"
+requires-python = ">=3.9"
+authors = [
+    { name = "MMSegmentation Contributors", email = "openmmlab@gmail.com" },
+]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'License :: OSI Approved :: Apache Software License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+]
+dynamic = ["version"]
+readme = "README.md"
+dependencies = [
+    "matplotlib",
+    "mmcv>=2.0.0,<3.0.0",
+    "mmengine>=0.5.0,<1.0.0",
+    "numpy",
+    "packaging",
+    "prettytable",
+    "scipy",
+    "torch",
+    "torchvision",
+]
+
+[project.urls]
+Home = "https://github.com/llteco/mmsegmentation"
+Docs = "https://mmsegmentation.readthedocs.io/en/main/"
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchaudio = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+clip = { git = "https://github.com/openai/CLIP.git" }
+latent-diffusion = { git = "https://github.com/CompVis/stable-diffusion", rev = "21f890f" }
+taming-transformers = { git = "https://github.com/CompVis/taming-transformers.git", rev = "master" }
+mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "main" }
+mmengine = { git = "https://github.com/open-mmlab/mmengine.git" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[dependency-groups]
+all = [
+    "cityscapesscripts>=2.2.4",
+    "clip",
+    "codecov>=2.1.13",
+    "diffusers>=0.34.0",
+    "einops==0.3.0",
+    "flake8>=7.3.0",
+    "ftfy>=6.3.1",
+    "imageio==2.9.0",
+    "imageio-ffmpeg==0.4.2",
+    "interrogate>=1.7.0",
+    "invisible-watermark>=0.2.0",
+    "kornia==0.6",
+    "latent-diffusion",
+    "matplotlib>=3.9.4",
+    "nibabel>=5.3.2",
+    "numpy>=2.0.2",
+    "omegaconf==2.1.1",
+    "packaging>=25.0",
+    "prettytable>=3.16.0",
+    "pudb==2019.2",
+    "pytest>=8.4.1",
+    "pytorch-lightning==1.4.2",
+    "regex>=2025.7.31",
+    "scipy>=1.13.1",
+    "streamlit>=0.73.1",
+    "taming-transformers",
+    "test-tube>=0.7.5",
+    "timm>=1.0.19",
+    "torch-fidelity==0.3.0",
+    "torchmetrics==0.6.0",
+    "transformers==4.19.2",
+    "xdoctest>=0.10.0",
+    "yapf>=0.43.0",
+]
+
+[project.optional-dependencies]
+tests = [
+    "codecov",
+    "flake8",
+    "ftfy",
+    "interrogate",
+    "pytest",
+    "regex",
+    "xdoctest>=0.10.0",
+    "yapf",
+]
+optional = [
+    "cityscapesscripts>=2.2.4",
+    "clip",
+    "diffusers>=0.34.0",
+    "einops==0.3.0",
+    "imageio==2.9.0",
+    "imageio-ffmpeg==0.4.2",
+    "invisible-watermark>=0.2.0",
+    "kornia==0.6",
+    "latent-diffusion",
+    "nibabel>=5.3.2",
+    "omegaconf==2.1.1",
+    "pudb==2019.2",
+    "pytorch-lightning==1.4.2",
+    "streamlit>=0.73.1",
+    "taming-transformers",
+    "test-tube>=0.7.5",
+    "timm>=1.0.19",
+    "torch-fidelity==0.3.0",
+    "torchmetrics==0.6.0",
+    "transformers==4.19.2",
+]
+multimodal = ["ftfy", "regex"]

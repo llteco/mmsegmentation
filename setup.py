@@ -18,9 +18,11 @@ version_file = 'mmseg/version.py'
 
 
 def get_version():
-    with open(version_file) as f:
-        exec(compile(f.read(), version_file, 'exec'))
-    return locals()['__version__']
+    local_vars = {}
+    with open(version_file, encoding='utf-8') as f:
+        # pylint: disable=exec-used
+        exec(compile(f.read(), version_file, 'exec'), None, local_vars)
+    return local_vars.get('__version__', '0.0.0.unknown')
 
 
 def parse_requirements(fname='requirements.txt', with_version=True):
@@ -182,10 +184,11 @@ if __name__ == '__main__':
             'Development Status :: 4 - Beta',
             'License :: OSI Approved :: Apache Software License',
             'Operating System :: OS Independent',
-            'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7',
-            'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
+            'Programming Language :: Python :: 3.10',
+            'Programming Language :: Python :: 3.11',
+            'Programming Language :: Python :: 3.12',
+            'Programming Language :: Python :: 3.13',
         ],
         license='Apache License 2.0',
         install_requires=parse_requirements('requirements/runtime.txt'),
