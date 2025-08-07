@@ -167,7 +167,7 @@ class VisionTransformer(BaseModule):
         final_norm (bool): Whether to add a additional layer to normalize
             final feature map. Default: False.
         interpolate_mode (str): Select the interpolate mode for position
-            embeding vector resize. Default: bicubic.
+            embedding vector resize. Default: bicubic.
         num_fcs (int): The number of fully-connected layers for FFNs.
             Default: 2.
         norm_eval (bool): Whether to set norm layers to eval mode, namely,
@@ -381,8 +381,8 @@ class VisionTransformer(BaseModule):
             if not any([exclude in name for exclude in self.frozen_exclude]):
                 param.requires_grad = False
 
-    def _pos_embeding(self, patched_img, hw_shape, pos_embed):
-        """Positioning embeding method.
+    def _pos_embedding(self, patched_img, hw_shape, pos_embed):
+        """Positioning embedding method.
 
         Resize the pos_embed, if the input image size doesn't match
             the training size.
@@ -450,7 +450,7 @@ class VisionTransformer(BaseModule):
         # stole cls_tokens impl from Phil Wang, thanks
         cls_tokens = self.cls_token.expand(B, -1, -1)
         x = torch.cat((cls_tokens, x), dim=1)
-        x = self._pos_embeding(x, hw_shape, self.pos_embed)
+        x = self._pos_embedding(x, hw_shape, self.pos_embed)
 
         if not self.with_cls_token:
             # Remove class token for transformer encoder input

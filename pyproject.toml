@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mmsegmentation"
 description = "Open MMLab Semantic Segmentation Toolbox and Benchmark"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "MMSegmentation Contributors", email = "openmmlab@gmail.com" },
 ]
@@ -13,8 +13,6 @@ classifiers = [
     'Development Status :: 4 - Beta',
     'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
@@ -25,6 +23,7 @@ dependencies = [
     "matplotlib",
     "mmcv>=2.0.0,<3.0.0",
     "mmengine>=0.5.0,<1.0.0",
+    "mmengine-config",
     "numpy",
     "packaging",
     "prettytable",
@@ -45,7 +44,8 @@ clip = { git = "https://github.com/openai/CLIP.git" }
 latent-diffusion = { git = "https://github.com/CompVis/stable-diffusion", rev = "21f890f" }
 taming-transformers = { git = "https://github.com/CompVis/taming-transformers.git", rev = "master" }
 mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "main" }
-mmengine = { git = "https://github.com/open-mmlab/mmengine.git" }
+mmengine = { git = "https://github.com/llteco/mmengine.git", rev = "main" }
+mmengine-config = { git = "https://github.com/llteco/mmengine-config.git", rev = "main" }
 
 [[tool.uv.index]]
 name = "pytorch"
