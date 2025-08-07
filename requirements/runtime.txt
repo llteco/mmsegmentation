@@ -1,5 +1,10 @@
 matplotlib
+mmcv@git+https://github.com/loseall/mmcv.git@main>=2.0.0,<3.0.0
+mmengine-config@git+https://github.com/llteco/mmengine-config.git@main
+mmengine@git+https://github.com/llteco/mmengine.git@main
 numpy
 packaging
 prettytable
 scipy
+torch
+torchvision

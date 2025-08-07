@@ -25,7 +25,7 @@ class StrideFormer(BaseModule):
         channels(list): The input channels for each MobileNetV3 block.
         embed_dims(list): The channels of the features input to the sea
             attention block.
-        key_dims(list, optional): The embeding dims for each head in
+        key_dims(list, optional): The embedding dims for each head in
             attention.
         depths(list, optional): describes the depth of the attention block.
             i,e: M,N.
