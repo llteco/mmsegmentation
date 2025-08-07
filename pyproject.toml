@@ -43,9 +43,9 @@ torchvision = { index = "pytorch" }
 clip = { git = "https://github.com/openai/CLIP.git" }
 latent-diffusion = { git = "https://github.com/CompVis/stable-diffusion", rev = "21f890f" }
 taming-transformers = { git = "https://github.com/CompVis/taming-transformers.git", rev = "master" }
-mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "main" }
-mmengine = { git = "https://github.com/llteco/mmengine.git", rev = "main" }
-mmengine-config = { git = "https://github.com/llteco/mmengine-config.git", rev = "main" }
+mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "3249d22" }
+mmengine = { git = "https://github.com/llteco/mmengine.git", rev = "f01b7c5" }
+mmengine-config = { git = "https://github.com/llteco/mmengine-config.git", rev = "fee39db" }
 
 [[tool.uv.index]]
 name = "pytorch"
