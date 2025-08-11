@@ -55,16 +55,16 @@ class SegDataPreProcessor(BaseDataPreprocessor):
 
     def __init__(
         self,
-        mean: Sequence[Number] = None,
-        std: Sequence[Number] = None,
+        mean: Optional[Sequence[Number]] = None,
+        std: Optional[Sequence[Number]] = None,
         size: Optional[tuple] = None,
         size_divisor: Optional[int] = None,
-        pad_val: Number = 0,
-        seg_pad_val: Number = 255,
+        pad_val: float = 0,
+        seg_pad_val: float = 255,
         bgr_to_rgb: bool = False,
         rgb_to_bgr: bool = False,
         batch_augments: Optional[List[dict]] = None,
-        test_cfg: dict = None,
+        test_cfg: Optional[dict] = None,
     ):
         super().__init__()
         self.size = size
@@ -82,10 +82,8 @@ class SegDataPreProcessor(BaseDataPreprocessor):
                                     '`mean` and `std`.'
             # Enable the normalization in preprocessing.
             self._enable_normalize = True
-            self.register_buffer('mean',
-                                 torch.tensor(mean).view(-1, 1, 1), False)
-            self.register_buffer('std',
-                                 torch.tensor(std).view(-1, 1, 1), False)
+            self.register_buffer('mean', torch.tensor(mean), False)
+            self.register_buffer('std', torch.tensor(std), False)
         else:
             self._enable_normalize = False
 
@@ -109,13 +107,22 @@ class SegDataPreProcessor(BaseDataPreprocessor):
         data = self.cast_data(data)  # type: ignore
         inputs = data['inputs']
         data_samples = data.get('data_samples', None)
+        is_video = inputs[0].ndim == 4
         # TODO: whether normalize should be after stack_batch
-        if self.channel_conversion and inputs[0].size(0) == 3:
+        if is_video and self.channel_conversion and inputs[0].size(0) == 3:
+            inputs = [_input[:, [2, 1, 0], ...] for _input in inputs]
+        elif self.channel_conversion and inputs[0].size(0) == 3:
             inputs = [_input[[2, 1, 0], ...] for _input in inputs]
 
         inputs = [_input.float() for _input in inputs]
         if self._enable_normalize:
-            inputs = [(_input - self.mean) / self.std for _input in inputs]
+            if is_video:
+                mean = self.mean.view(1, -1, 1, 1)
+                std = self.std.view(1, -1, 1, 1)
+            else:
+                mean = self.mean.view(-1, 1, 1)
+                std = self.std.view(-1, 1, 1)
+            inputs = [(_input - mean) / std for _input in inputs]
 
         if training:
             assert data_samples is not None, ('During training, ',
