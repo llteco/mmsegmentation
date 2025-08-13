@@ -769,3 +769,107 @@ class LoadImageFromNpyFile(LoadImageFromFile):
         results['img_shape'] = img.shape[:2]
         results['ori_shape'] = img.shape[:2]
         return results
+
+
+@TRANSFORMS.register_module()
+class LoadADE20KAnnotation(LoadAnnotations):
+    """Load annotations for semantic segmentation provided by dataset.
+
+    Note:
+        The different to LoadAnnotation is the format is in RGB rather
+        than single Y channel. Usually this format contains more than
+        256 number of classes.
+
+    The annotation format is as the following:
+
+    .. code-block:: python
+
+        {
+            # Filename of semantic segmentation ground truth file.
+            'seg_map_path': 'a/b/c'
+        }
+
+    After this module, the annotation has been changed to the format below:
+
+    .. code-block:: python
+
+        {
+            # in str
+            'seg_fields': List
+             # In uint8 type.
+            'gt_seg_map': np.ndarray (H, W, 3)
+        }
+
+    Required Keys:
+
+    - seg_map_path (str): Path of semantic segmentation ground truth file.
+    - _objects (list[int])
+
+    Added Keys:
+
+    - seg_fields (List)
+    - gt_seg_map (np.uint16)
+
+    Args:
+        reduce_zero_label (bool, optional): Whether reduce all label value
+            by 1. Usually used for datasets where 0 is background label.
+            Defaults to None.
+        imdecode_backend (str): The image decoding backend type. The backend
+            argument for :func:``mmcv.imfrombytes``.
+            See :fun:``mmcv.imfrombytes`` for details.
+            Defaults to 'pillow'.
+        backend_args (dict): Arguments to instantiate a file backend.
+            See https://mmengine.readthedocs.io/en/latest/api/fileio.htm
+            for details. Defaults to None.
+            Notes: mmcv>=2.0.0rc4, mmengine>=0.2.0 required.
+    """
+
+    def __init__(self, background_value: int = 65535, **kwargs):
+        super().__init__(**kwargs)
+        self.background_value = background_value
+
+    def _load_seg_map(self, results: dict) -> None:
+        img_bytes = fileio.get(
+            results['seg_map_path'], backend_args=self.backend_args)
+        gt_semantic_seg = mmcv.imfrombytes(
+            img_bytes, flag='unchanged', backend=self.imdecode_backend)
+        gt_semantic_seg = gt_semantic_seg.squeeze().astype(np.uint8)
+
+        _, gt_g, gt_r = np.split(gt_semantic_seg, 3, axis=-1)
+        high_val = (gt_r / 10).astype(np.int32)
+        low_val = gt_g.astype(np.int32)
+        gt_semantic_seg = high_val * 256 + low_val
+
+        # reduce zero_label
+        if self.reduce_zero_label is None:
+            self.reduce_zero_label = results['reduce_zero_label']
+        assert self.reduce_zero_label == results['reduce_zero_label'], (
+            'Initialize dataset with `reduce_zero_label` as '
+            f'{results["reduce_zero_label"]} but when load annotation '
+            f"the `reduce_zero_label` is {self.reduce_zero_label}"
+        )
+        bg = self.background_value
+        if self.reduce_zero_label:
+            # avoid using underflow conversion
+            gt_semantic_seg[gt_semantic_seg == 0] = bg
+            gt_semantic_seg = gt_semantic_seg - 1
+            gt_semantic_seg[gt_semantic_seg == bg - 1] = bg
+        objects_in_seg = results.get('_objects')
+        if label_map := results.get('label_map'):
+            # Add deep copy to solve bug of repeatedly
+            # replace `gt_semantic_seg`, which is reported in
+            # https://github.com/open-mmlab/mmsegmentation/pull/1445/
+            gt_semantic_seg_copy = np.zeros_like(gt_semantic_seg) + bg
+            if not objects_in_seg:
+                objects_in_seg = tuple(label_map.keys())
+            for old_id in objects_in_seg:
+                if old_id not in label_map:
+                    # in case that some id is not in semantic segmentation
+                    continue
+                mask = gt_semantic_seg == old_id
+                if self.reduce_zero_label:
+                    mask = gt_semantic_seg == old_id - 1
+                gt_semantic_seg_copy[mask] = label_map[old_id]
+            gt_semantic_seg = gt_semantic_seg_copy
+        results['gt_seg_map'] = gt_semantic_seg.astype(np.uint16)
+        results['seg_fields'].append('gt_seg_map')

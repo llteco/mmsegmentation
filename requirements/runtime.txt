@@ -4,6 +4,7 @@ mmengine-config@git+https://github.com/llteco/mmengine-config.git@main
 mmengine@git+https://github.com/llteco/mmengine.git@main
 numpy
 packaging
+pooch
 prettytable
 scipy
 torch

@@ -488,6 +488,22 @@ def hsidrive_palette():
             [255, 166, 0], [0, 204, 204]]
 
 
+def ade2021_classes():
+    """ADE20K 2021 class names for external use."""
+    from mmseg.datasets import ADE20K2021Dataset
+
+    metainfo = ADE20K2021Dataset.default_metainfo()
+    return metainfo['classes']
+
+
+def ade2021_palette():
+    """ADE20K 2021 palette for external use."""
+    from mmseg.datasets import ADE20K2021Dataset
+
+    metainfo = ADE20K2021Dataset.default_metainfo()
+    return metainfo['palette']
+
+
 dataset_aliases = {
     'cityscapes': ['cityscapes'],
     'ade': ['ade', 'ade20k'],
@@ -510,7 +526,8 @@ dataset_aliases = {
     'hsidrive': [
         'hsidrive', 'HSIDrive', 'HSI-Drive', 'hsidrive20', 'HSIDrive20',
         'HSI-Drive20'
-    ]
+    ],
+    'ade2021': ['ade2021', 'ade20k_2021', 'ade20k_2021_17_01'],
 }
 
 
