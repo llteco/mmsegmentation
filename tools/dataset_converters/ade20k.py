@@ -40,7 +40,12 @@ def _job2021(img):
     if not desc_file.exists():
         return
     with desc_file.open(encoding='cp1252') as f:
-        desc = json.load(f)
+    try:
+        with desc_file.open(encoding='utf-8') as f:
+            desc = json.load(f)
+    except UnicodeDecodeError:
+        with desc_file.open(encoding='cp1252') as f:
+            desc = json.load(f)
     seg = np.array(Image.open(gt_seg))
     for obj in desc['annotation']['object']:
         high_val = (seg[..., 0] // 10).astype('int32')
