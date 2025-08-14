@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 # yapf: disable
-from .ade import ADE20KDataset
+from .ade import ADE20K2016Dataset, ADE20K2021Dataset, ADE20KDataset
 from .basesegdataset import BaseCDDataset, BaseSegDataset
 from .bdd100k import BDD100KDataset
 from .chase_db1 import ChaseDB1Dataset
@@ -61,5 +61,5 @@ __all__ = [
     'MapillaryDataset_v2', 'Albu', 'LEVIRCDDataset',
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'DSDLSegDataset', 'BDD100KDataset',
-    'NYUDataset', 'HSIDrive20Dataset'
+    'NYUDataset', 'HSIDrive20Dataset', 'ADE20K2016Dataset', 'ADE20K2021Dataset'
 ]
