@@ -66,7 +66,13 @@ def generate_2021(args):
         events.append(event)
     for i, event in enumerate(events):
         result = event.result()
-        objects.update(result)
+        try:
+            result = event.result()
+        except Exception as e:
+            print(f"Error processing image {i}: {e}")
+            continue
+        if result is not None:
+            objects.update(result)
         if i % 100 == 0:
             print(f"Processed {i:05d} images", end='\r')
     print('\nDone')
