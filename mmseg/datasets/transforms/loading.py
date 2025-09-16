@@ -833,7 +833,7 @@ class LoadADE20KAnnotation(LoadAnnotations):
             results['seg_map_path'], backend_args=self.backend_args)
         gt_semantic_seg = mmcv.imfrombytes(
             img_bytes, flag='unchanged', backend=self.imdecode_backend)
-        gt_semantic_seg = gt_semantic_seg.squeeze().astype(np.uint8)
+        gt_semantic_seg = gt_semantic_seg.astype(np.uint8)
 
         _, gt_g, gt_r = np.split(gt_semantic_seg, 3, axis=-1)
         high_val = (gt_r / 10).astype(np.int32)
@@ -871,5 +871,5 @@ class LoadADE20KAnnotation(LoadAnnotations):
                     mask = gt_semantic_seg == old_id - 1
                 gt_semantic_seg_copy[mask] = label_map[old_id]
             gt_semantic_seg = gt_semantic_seg_copy
-        results['gt_seg_map'] = gt_semantic_seg.astype(np.uint16)
+        results['gt_seg_map'] = gt_semantic_seg.squeeze().astype(np.uint16)
         results['seg_fields'].append('gt_seg_map')
