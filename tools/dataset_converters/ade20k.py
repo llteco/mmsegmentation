@@ -1,5 +1,4 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-
 import argparse
 import json
 from concurrent.futures import ProcessPoolExecutor
@@ -11,7 +10,7 @@ from PIL import Image
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Generate ADE20K description file'
+        description='Generate ADE20K description file',
     )
     parser.add_argument(
         'data_root',
@@ -29,7 +28,7 @@ def parse_args():
         default='training',
         help='Specify a split of the dataset to process (default: training)',
     )
-    parser.add_argument('--version', choices=['2016', '2021'], default='2021')
+    parser.add_argument('--version', choices=['2021'], default='2021')
     return parser.parse_args()
 
 
@@ -39,7 +38,6 @@ def _job2021(img):
     desc_file = img.with_suffix('.json')
     if not desc_file.exists():
         return
-    with desc_file.open(encoding='cp1252') as f:
     try:
         with desc_file.open(encoding='utf-8') as f:
             desc = json.load(f)
@@ -57,30 +55,29 @@ def _job2021(img):
         palette = palettes[0]
         objects[obj['name']] = dict(
             id=obj['name_ndx'],
-            palette=palette.tolist()
+            palette=palette.tolist(),
         )
     return objects
 
 
 def generate_2021(args):
     objects = {}
-    pool = ProcessPoolExecutor()
-    events = []
-    for img in Path(args.data_root).rglob(f"**/{args.split}/**/*.jpg"):
-        event = pool.submit(_job2021, img)
-        events.append(event)
-    for i, event in enumerate(events):
-        result = event.result()
-        try:
-            result = event.result()
-        except Exception as e:
-            print(f"Error processing image {i}: {e}")
-            continue
-        if result is not None:
-            objects.update(result)
-        if i % 100 == 0:
-            print(f"Processed {i:05d} images", end='\r')
-    print('\nDone')
+    with ProcessPoolExecutor() as pool:
+        events = []
+        for img in Path(args.data_root).rglob(f"**/{args.split}/**/*.jpg"):
+            event = pool.submit(_job2021, img)
+            events.append(event)
+        for i, event in enumerate(events):
+            try:
+                result = event.result()
+            except Exception as e:
+                print(f"Error processing image {i}: {e}")
+                continue
+            if result is not None:
+                objects.update(result)
+            if i % 100 == 0:
+                print(f"Processed {i:05d} images", end='\r')
+        print('\nDone')
     objects_sorted = dict(sorted(objects.items(), key=lambda x: x[1]['id']))
     with open(args.output_file, 'w', encoding='utf-8') as f:
         json.dump(objects_sorted, f, indent=4)
