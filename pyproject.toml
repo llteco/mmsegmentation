@@ -29,7 +29,7 @@ dependencies = [
     "pooch>=1.8.2",
     "prettytable",
     "scipy",
-    "torch",
+    "torch<2.9.0",
     "torchvision",
 ]
 
@@ -44,12 +44,12 @@ torchvision = { index = "pytorch" }
 clip = { git = "https://github.com/openai/CLIP.git" }
 latent-diffusion = { git = "https://github.com/CompVis/stable-diffusion", rev = "21f890f" }
 taming-transformers = { git = "https://github.com/CompVis/taming-transformers.git", rev = "master" }
-mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "3249d22" }
+mmcv = { git = "https://github.com/loseall/mmcv.git", rev = "bb0bc19" }
 mmengine = { git = "https://github.com/llteco/mmengine.git", rev= "99993ae" }
 
 [[tool.uv.index]]
 name = "pytorch"
-url = "https://download.pytorch.org/whl/cu126"
+url = "https://download.pytorch.org/whl/cu129"
 explicit = true
 
 [dependency-groups]
